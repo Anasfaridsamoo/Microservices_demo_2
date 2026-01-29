@@ -12,7 +12,7 @@ class TestcontainersConfiguration {
     @Bean
     @ServiceConnection
     PostgreSQLContainer postgresContainer() {
-        //postgres:16-alpine is used here to match the production database version
+        // postgres:16-alpine is used here to match the production database version
         return new PostgreSQLContainer(DockerImageName.parse("postgres:16-alpine"));
     }
 }
