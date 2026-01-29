@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: 'catalog-service'
+  datasource:
+    url: '${DB_URL:jdbc:postgresql://catalogue-db:5432/postgres}'
+    username: '${DB_USER:postgres}'
+    password: '${DB_PASSWORD:postgres}'
+server:
+  port: 8081
+  shutdown: graceful
+

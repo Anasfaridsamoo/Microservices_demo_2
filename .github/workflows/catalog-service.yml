@@ -1,0 +1,33 @@
+name: catalog service
+
+on:
+  push:
+    paths:
+      - 'catalog-service/**'
+    branches:
+      - '**'
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+
+    defaults:
+      run:
+        working-directory: ./catalog-service
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Java 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+
+      - name: Fix permissions and verify
+        run: |
+          chmod +x mvnw
+          ./mvnw -ntp verify
+
