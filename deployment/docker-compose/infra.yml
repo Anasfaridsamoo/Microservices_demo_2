@@ -1,14 +1,14 @@
 name: 'Microservices_demo_2'
 services:
   catalogue-db:
-    image: postgres:13
+    image: postgres:16-alpine
     container_name: catalogue-db
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: postgres
     ports:
-      - "5432:5432"
+      - "15432:5432"
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 10s

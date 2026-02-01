@@ -1,0 +1,74 @@
+version: '3'
+
+vars:
+  # Detect OS
+  GOOS: "{{default OS .GOOS}}"
+  # Use proper Maven wrapper for Windows vs Linux/macOS
+  MVNW: '{{if eq .GOOS "windows"}}mvnw.cmd{{else}}./mvnw{{end}}'
+  # Docker Compose directory and infra file
+  DC_DIR: "deployment/docker-compose"
+  INFRA_DC_FILE: "{{.DC_DIR}}/infra.yml"
+  APP_DC_FILE: "{{.DC_DIR}}/apps.yml"
+
+tasks:
+  default:
+    desc: Run tests
+    cmds:
+      - task: test
+
+  test:
+    desc: Format code and run Maven tests
+    deps: [format]
+    cmds:
+      - "{{.MVNW}} -pl catalog-service spring-boot:build-image -DskipTests"
+
+  format:
+    desc: Apply code formatting via Spotless
+    cmds:
+      - "{{.MVNW}} spotless:apply"
+
+  build:
+    desc: Build project
+    cmds:
+      - "{{.MVNW}} verify"
+
+  start_infra:
+    desc: Start Docker infrastructure
+    cmds:
+      - "docker compose -f {{.INFRA_DC_FILE}} up -d"
+
+  stop_infra:
+    desc: Stop and remove Docker containers
+    cmds:
+      - "docker compose -f {{.INFRA_DC_FILE}} stop"
+      - "docker compose -f {{.INFRA_DC_FILE}} rm -f"
+
+  restart_infra:
+    desc: Restart Docker infrastructure
+    cmds:
+      - task: stop_infra
+      - task: sleep  # waits 5 seconds by default
+      - task: start_infra
+
+  start:
+    deps: [build]
+    cmds:
+      - "docker compose -f {{.INFRA_DC_FILE}} -f {{.APP_DC_FILE}} up -d"
+
+  stop:
+    cmds:
+      - "docker compose -f {{.INFRA_DC_FILE}} -f {{.APP_DC_FILE}} stop"
+      - "docker compose -f {{.INFRA_DC_FILE}} -f {{.APP_DC_FILE}} rm -f"
+
+  restart:
+    cmds:
+      - task: stop
+      - task: sleep  # waits 5 seconds by default
+      - task: start
+
+  sleep:
+    desc: Pause execution for a given duration (default 5s)
+    vars:
+      DURATION: "{{default 5 .DURATION}}"
+    cmds:
+      - sleep {{.DURATION}}
