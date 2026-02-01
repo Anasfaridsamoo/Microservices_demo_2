@@ -30,6 +30,7 @@ jobs:
         run: |
           chmod +x mvnw
           ./mvnw -ntp verify
+
       - if: ${{github.ref == 'refs/heads/main'}}
         name: Login to DockerHub
         uses: docker/login-action@v3
