@@ -43,6 +43,5 @@ jobs:
         run: |
           # Build and push in ONE step
           ./mvnw spring-boot:build-image -DskipTests \
-            -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/bookstore-catalog-service:latest \
-            -Dspring-boot.build-image.publish=true
+            docker push $DOCKER_IMAGE_NAME
        
