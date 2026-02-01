@@ -40,11 +40,8 @@ jobs:
 
       - if: ${{github.ref == 'refs/heads/main'}}
         name: Build and Push Docker Image
-        env:
-          # Manual definition to match your pom.xml property
-          DOCKER_IMAGE_NAME: ${{secrets.DOCKERHUB_USERNAME}}/bookstore-catalog-service
         run: |
-          ./mvnw spring-boot:build-image -DskipTests
-          echo "Pushing the image $DOCKER_IMAGE_NAME to Docker Hub..."
-          docker push $DOCKER_IMAGE_NAME
+          # Build and push in ONE step
+          ./mvnw spring-boot:build-image -DskipTests \
+            docker push $DOCKER_IMAGE_NAME
        
