@@ -37,9 +37,14 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+
       - if: ${{github.ref == 'refs/heads/main'}}
         name: Build and Push Docker Image
         run: |
-          ./mvnw spring-boot:build-image -DskipTests
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/bookstore-catalog-service
-
+          # Build Docker image with correct name
+          ./mvnw spring-boot:build-image -DskipTests \
+            -Dspring-boot.build-image.imageName=${{ secrets.DOCKERHUB_USERNAME }}/bookstore-catalog-service:latest
+          
+          # Push it to Docker Hub
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/bookstore-catalog-service:latest
+       
